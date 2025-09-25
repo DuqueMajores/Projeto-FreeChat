@@ -136,3 +136,13 @@ header h5{ font-weight:300; color: #dcdcdc; font-size: .95rem; }
 
 /* Animação */
 @keyframes fadeIn { from { opacity:0; transform: translateY(8px);} to { opacity:1; transform: translateY(0);} }
+
+/* Footer simples e com altura maior */
+footer {
+  width: 100%;
+  max-width: var(--max-width);
+  padding: 80px 0; /* Aumenta a altura do footer */
+  text-align: center;
+  font-size: 0.85rem;
+  color: #aaa;
+}
