@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FreeChat</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .msg {
+      margin: 5px 0;
+    }
+    .msg a {
+      color: green;
+      font-weight: bold;
+      text-decoration: none;
+    }
+    .msg a:hover {
+      text-decoration: underline;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h2>FreeChat</h2>
+    <h5>Escreva o que quiser</h5>
+    <h5>Encontre o que precisa</h5>
+  </header>
+
+  <!-- Pesquisa -->
+  <form id="search-form">
+    <input type="search" name="pesquisa" id="pesquisa" placeholder="O que você procura?" title="Campo de pesquisa">
+    <button type="submit">Pesquisar</button>
+  </form>
+
+  <!-- Caixa do chat -->
+  <div id="chat-box"></div>
+
+  <!-- Envio de mensagens -->
+  <form id="chat-form">
+    <input type="text" name="mensagem" id="mensagem" placeholder="Mostre para o mundo!" title="Campo de mensagem" autocomplete="off">
+    <button type="submit">Enviar</button>
+  </form>
+
+  <script>
+    const chatForm = document.getElementById("chat-form");
+    const chatBox = document.getElementById("chat-box");
+    const inputMensagem = document.getElementById("mensagem");
+  
+    const searchForm = document.getElementById("search-form");
+    const inputPesquisa = document.getElementById("pesquisa");
+  
+    // Função para detectar links, números, e-mails e @usuario (Instagram)
+    function formatarMensagem(texto) {
+      // URLs (http, https, www)
+      texto = texto.replace(/(https?:\/\/[^\s]+|www\.[^\s]+)/gi, function (match) {
+        let url = match;
+        if (!url.startsWith("http")) url = "http://" + url;
+        return `<a href="${url}" target="_blank">${match}</a>`;
+      });
+  
+      // Telefones (10 ou 11 dígitos seguidos -> WhatsApp)
+      texto = texto.replace(/\b(\d{10,11})\b/g, function (match) {
+        return `<a href="https://wa.me/55${match}" target="_blank">${match}</a>`;
+      });
+  
+      // E-mails (texto@texto.com)
+      texto = texto.replace(
+        /\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi,
+        function (match) {
+          return `<a href="mailto:${match}">${match}</a>`;
+        }
+      );
+  
+      // Menções @usuario -> Instagram (evita capturar e-mails)
+      texto = texto.replace(/(^|\s)@([a-zA-Z0-9._]+)/g, function (match, space, user) {
+        return `${space}<a href="https://instagram.com/${user}" target="_blank">@${user}</a>`;
+      });
+  
+      return texto;
+    }
+  
+    // Carregar mensagens do backend
+    async function carregarMensagens() {
+      const resp = await fetch("/messages");
+      const dados = await resp.json();
+      chatBox.innerHTML = ""; // limpa antes de carregar
+      dados.forEach(msg => {
+        const div = document.createElement("div");
+        div.classList.add("msg");
+        div.innerHTML = formatarMensagem(msg.text);
+        chatBox.appendChild(div);
+      });
+      chatBox.scrollTop = chatBox.scrollHeight;
+    }
+  
+    // Enviar mensagem
+    chatForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const texto = inputMensagem.value.trim();
+      if (texto !== "") {
+        await fetch("/messages", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: texto })
+        });
+        inputMensagem.value = "";
+        carregarMensagens(); // recarrega mensagens após enviar
+      }
+    });
+  
+    // Pesquisar mensagens
+    searchForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      const termo = inputPesquisa.value.trim().toLowerCase();
+      const mensagens = chatBox.getElementsByClassName("msg");
+  
+      for (let msg of mensagens) {
+        if (termo === "" || msg.textContent.toLowerCase().includes(termo)) {
+          msg.classList.remove("hidden");
+        } else {
+          msg.classList.add("hidden");
+        }
+      }
+    });
+  
+    // Carrega mensagens assim que a página abrir
+    carregarMensagens();
+  </script>
+  
+  
+</body>
+</html>
+

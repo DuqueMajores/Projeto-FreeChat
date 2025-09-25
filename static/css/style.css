@@ -1,0 +1,138 @@
+/* style.css (versão atualizada) */
+
+/* Variáveis de tema — facilite ajustes corporativos */
+:root{
+  --bg-1: #1f1f1f;
+  --bg-2: #2c2c54;
+  --accent: #00d4ff;
+  --muted: #333;
+  --glass: rgba(255,255,255,0.04);
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --max-width: 900px;
+  --content-width: 600px;
+  --gap: 16px;
+  --transition: 200ms ease-in-out;
+}
+
+/* Reset e tipografia base */
+*{ margin:0; padding:0; box-sizing:border-box; font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+html,body{ height:100%; }
+body{
+  min-height:100vh;
+  background: linear-gradient(135deg, var(--bg-1), var(--bg-2));
+  color: #f1f1f1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:24px;
+  gap: var(--gap);
+}
+
+/* Container limitado para aparência corporativa */
+main, .app-wrapper { width:100%; max-width: var(--max-width); padding: 8px; }
+
+/* Cabeçalho */
+header { text-align:center; margin-bottom: 4px; }
+header h2{ font-size: 2rem; color: var(--accent); text-shadow: 0 0 12px rgba(0,212,255,0.5); letter-spacing: .4px; }
+header h5{ font-weight:300; color: #dcdcdc; font-size: .95rem; }
+
+/* Pesquisa - alinhamento e acessibilidade */
+#search-form{
+  display:flex; justify-content:center; gap:12px; width:100%; max-width: var(--content-width);
+  margin-bottom: 8px;
+}
+#search-form input{
+  padding:10px 16px; border:none; border-radius: var(--radius-pill); outline:none;
+  width: 100%; background: var(--muted); color: #f1f1f1; transition: box-shadow var(--transition), background var(--transition);
+}
+#search-form input:focus{ background:#444; box-shadow: 0 0 10px rgba(0,212,255,0.18); }
+#search-form button{
+  padding:10px 18px; border:none; border-radius: var(--radius-pill); background: var(--accent);
+  color:#101010; font-weight:700; cursor:pointer; transition: transform var(--transition), box-shadow var(--transition);
+}
+#search-form button:hover{ transform: scale(1.03); box-shadow: 0 6px 18px rgba(0,212,255,0.12); }
+
+/* CAIXA DO CHAT — aumentado e responsivo
+   - min-height em % da viewport para escalabilidade (ex.: 60vh)
+   - max-height para telas muito grandes
+*/
+#chat-box{
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), transparent);
+  border: 1px solid var(--muted);
+  border-radius: var(--radius-lg);
+  width:100%;
+  max-width: var(--content-width);
+  min-height: 60vh;        /* AUMENTADO: ocupa 60% da altura da viewport */
+  max-height: 75vh;        /* impede que ocupe toda a tela */
+  height: auto;            /* deixa o min/max controlar */
+  overflow-y: auto;
+  padding:18px;
+  margin-bottom: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.45), inset 0 0 12px rgba(0,0,0,0.35);
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+/* Scrollbar (Webkit) */
+#chat-box::-webkit-scrollbar{ width:10px; }
+#chat-box::-webkit-scrollbar-track{ background: transparent; }
+#chat-box::-webkit-scrollbar-thumb{
+  background: var(--accent);
+  border-radius: 10px;
+  border: 2px solid rgba(0,0,0,0.12);
+}
+
+/* Mensagens — linguagem visual clara */
+.msg{
+  display: block; /* Alterado de inline-block para block */
+  background: rgba(44,44,84,0.95);
+  color: #fff;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+  border-radius: 12px;
+  max-width: 86%;
+  word-wrap: break-word;
+  animation: fadeIn .25s ease-in-out;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.25);
+  line-height: 1.35;
+  font-size: .97rem;
+}
+
+/* Links dentro de mensagens */
+.msg a{ color: var(--accent); font-weight:600; text-decoration:underline; text-underline-offset:3px; }
+.msg a:hover{ opacity:.95; }
+
+/* Destaque de busca / resultado */
+.msg.highlight{
+  background: linear-gradient(90deg, rgba(0,212,255,0.08), rgba(255,255,255,0.02));
+  border: 1px solid rgba(0,212,255,0.22);
+  box-shadow: 0 8px 30px rgba(0,212,255,0.06);
+  transform: translateY(-2px);
+}
+
+/* Formulário de envio alinhado ao centro com layout responsivo */
+#chat-form{
+  display:flex; gap:12px; width:100%; max-width: var(--content-width);
+}
+#chat-form input{
+  flex:1; padding:12px 16px; border:none; border-radius: var(--radius-pill); outline:none;
+  background: var(--muted); color: #f1f1f1; transition: background var(--transition), box-shadow var(--transition);
+}
+#chat-form input:focus{ background:#444; box-shadow: 0 0 12px rgba(0,212,255,0.14); }
+#chat-form button{
+  padding:12px 20px; border:none; border-radius: var(--radius-pill);
+  background: var(--accent); color:#0f0f0f; font-weight:800; cursor:pointer; transition: transform var(--transition);
+}
+#chat-form button:hover{ transform: translateY(-2px); box-shadow: 0 10px 26px rgba(0,212,255,0.12); }
+
+/* Responsividade */
+@media (max-width: 720px){
+  :root{ --content-width: 92vw; }
+  header h2{ font-size: 1.6rem; }
+  #chat-box{ min-height: 55vh; max-height: 70vh; padding:12px; }
+  .msg{ font-size: .95rem; padding:10px 12px; }
+}
+
+/* Animação */
+@keyframes fadeIn { from { opacity:0; transform: translateY(8px);} to { opacity:1; transform: translateY(0);} }
